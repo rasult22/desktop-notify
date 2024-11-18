@@ -9,8 +9,13 @@ const inDevelopment = process.env.NODE_ENV === "development";
 function createWindow() {
     const preload = path.join(__dirname, "preload.js");
     const mainWindow = new BrowserWindow({
-        width: 800,
-        height: 600,
+        closable: false,
+        minimizable: false,
+        maximizable: false,
+        resizable: false,
+        // skipTaskbar: true,
+        frame: false,
+        fullscreen: true,
         webPreferences: {
             devTools: inDevelopment,
             contextIsolation: true,
@@ -19,8 +24,8 @@ function createWindow() {
 
             preload: preload,
         },
-        titleBarStyle: "hidden",
     });
+  
     registerListeners(mainWindow);
 
     if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
