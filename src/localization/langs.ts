@@ -2,13 +2,13 @@ import { Language } from "./language";
 
 export default [
     {
-        key: "en",
-        nativeName: "English",
-        prefix: "🇺🇸",
+        key: "ru-RU",
+        nativeName: "Русский",
+        prefix: "ru",
     },
     {
-        key: "pt-BR",
-        nativeName: "Português (Brasil)",
-        prefix: "🇧🇷",
+        key: "kk-KZ",
+        nativeName: "Қазақша",
+        prefix: "kz",
     },
 ] satisfies Language[];

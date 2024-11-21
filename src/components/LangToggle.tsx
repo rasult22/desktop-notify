@@ -16,7 +16,7 @@ export default function LangToggle() {
         <ToggleGroup type="single" onValueChange={onValueChange} value={currentLang}>
             {langs.map((lang) => (
                 <ToggleGroupItem key={lang.key} value={lang.key}>
-                    {`${lang.prefix} ${lang.nativeName}`}
+                    {`${lang.nativeName}`}
                 </ToggleGroupItem>
             ))}
         </ToggleGroup>

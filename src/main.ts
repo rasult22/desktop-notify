@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow} from "electron";
 import registerListeners from "./helpers/ipc/listeners-register";
 // "electron-squirrel-startup" seems broken when packaging with vite
 //import started from "electron-squirrel-startup";
@@ -9,13 +9,13 @@ const inDevelopment = process.env.NODE_ENV === "development";
 function createWindow() {
     const preload = path.join(__dirname, "preload.js");
     const mainWindow = new BrowserWindow({
-        closable: false,
-        minimizable: false,
-        maximizable: false,
-        resizable: false,
+        // closable: false,
+        // minimizable: false,
+        // maximizable: false,
+        // resizable: false,
         // skipTaskbar: true,
-        frame: false,
-        fullscreen: true,
+        // frame: false,
+        // fullscreen: true,
         webPreferences: {
             devTools: inDevelopment,
             contextIsolation: true,
@@ -25,6 +25,7 @@ function createWindow() {
             preload: preload,
         },
     });
+    mainWindow.webContents.openDevTools()
   
     registerListeners(mainWindow);
 

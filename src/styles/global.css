@@ -130,3 +130,22 @@
         -webkit-app-region: drag;
     }
 }
+
+html, body {
+    /* background-color: #28382d; */
+    background-color: white;
+    /* color: white; */
+}
+.logo {
+    transform: rotateY(360deg);
+    animation: spin 4s infinite linear;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotateY(0);
+    }
+    to {
+      transform: rotateY(360deg);
+    }
+  }

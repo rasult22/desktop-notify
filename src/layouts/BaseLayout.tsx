@@ -1,13 +1,13 @@
 import React from "react";
-import DragWindowRegion from "@/components/DragWindowRegion";
 import NavigationMenu from "@/components/NavigationMenu";
-
+import IdleScreen from "@/components/IdleScreen";
 export default function BaseLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             <NavigationMenu />
             <hr />
             <main>{children}</main>
+            <IdleScreen />
         </>
     );
 }

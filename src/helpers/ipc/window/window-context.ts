@@ -6,5 +6,13 @@ export function exposeWindowContext() {
         minimize: () => ipcRenderer.invoke(WIN_MINIMIZE_CHANNEL),
         maximize: () => ipcRenderer.invoke(WIN_MAXIMIZE_CHANNEL),
         close: () => ipcRenderer.invoke(WIN_CLOSE_CHANNEL),
+        onUserIdle: (callback: () => void) => {
+            console.log('onUserIdle')
+            ipcRenderer.on('user-idle', callback)
+        },
+        userActivity: () => {
+            console.log('userActivity')
+            ipcRenderer.send('user-activity')
+        }
     });
 }
