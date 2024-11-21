@@ -1,12 +1,27 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import ToggleTheme from "@/components/ToggleTheme";
+
+import {Textarea as BaseTextArea} from '@/components/ui/textarea'
 import { useTranslation } from "react-i18next";
 import LangToggle from "@/components/LangToggle";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
+import { AlertDialog } from "@radix-ui/react-alert-dialog";
+import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Loader2 } from "lucide-react";
+type Case = {
+    id: number,
+    text: string,
+    desc: string
+}
 export default function HomePage() {
     const { t } = useTranslation();
-    const cases = [
+    const [currentCase, setCase] = useState<Case>()
+    const [formState, setFormState] = useState<'loading' | 'done' | 'initial'>('initial')
+    const [modalState, setModalState] = useState<'open' | 'closed'>('closed')
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    
+    const cases: Case[] = [
         {
             id:1,
             text: 'Психологическая помощь',
@@ -48,13 +63,89 @@ export default function HomePage() {
             desc: 'Опишите ситуацию самостоятельно'
         },
     ]
+    const onMessage = async () => {
+        setFormState('loading')
+        await startWebcam()
+        capturePicture()
+        setTimeout(() => {
+            setFormState('done')
+            setTimeout(() => {
+                setFormState('initial')
+                setCase(undefined)
+                setModalState('closed')
+            }, 500)
+        }, 500)
+    }
+     // Start the webcam
+     const startWebcam = async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        if (videoRef.current) {
+            videoRef.current.srcObject = stream;
+            videoRef.current.play();
+            console.log('video stream started')
+        }
+    };
+
+    // Capture a picture and convert it to a file
+    const capturePicture = () => {
+        const canvas = canvasRef.current;
+        const video = videoRef.current;
+        if (canvas && video) {
+            console.log('canvas and video is there')
+            const context = canvas.getContext('2d');
+    
+            // Set canvas size to video dimensions
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+    
+            // Draw the video frame onto the canvas
+            context?.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+            // Convert canvas to a blob
+            canvas.toBlob((blob) => {
+                console.log(blob)
+                if (blob) {
+                    const file = new File([blob], 'captured-image.png', { type: 'image/png' });
+                    console.log(file); // Use or send the file as needed
+                }
+            }, 'image/png');
+
+        }
+    };
+    
     return (
         <>
+            <AlertDialog open={modalState === 'open'}>
+                <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle className="text-[24px] leading-[120%]">Вы хотите сообщить об этом?</AlertDialogTitle>
+                    <AlertDialogDescription className="text-[16px]">
+                        {currentCase?.text}
+                    </AlertDialogDescription>
+                    <div className="pt-4">
+                        <BaseTextArea placeholder="Дополнительная информация (не обязательно)" /> 
+                    </div>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel className="text-[16px]" onClick={() => setModalState('closed')}>Отмена</AlertDialogCancel>
+                    <AlertDialogAction className="text-[16px]" onClick={onMessage}>
+                        {formState === 'done' ? 'Отправлено!' : formState === 'loading' ? 
+                            <Loader2 className="animate-spin" />
+                        :'Отправить сообщение'
+                        }
+                        
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <div className="flex flex-col items-center justify-center gap-2 px-5">
                 <h1 className="text-4xl font-bold mt-8">Выберите причину уведомления</h1>
                 <div className="grid grid-cols-2 gap-4 mt-4">
                     {cases.map(x => {
-                        return <Card key={x.id} className="w-[400px] min-h-[200px] transition-all active:scale-[0.99] active:opacity-85 cursor-pointer hover:scale-[1.02]">
+                        return <Card onClick={() => {
+                            setModalState('open')
+                            setCase(x)
+                        }} key={x.id} className="w-[400px] min-h-[200px] transition-all active:scale-[0.99] active:opacity-85 cursor-pointer hover:scale-[1.02]">
                                 <CardHeader>
                                     <CardTitle className="leading-[120%]">
                                         {x.text}
@@ -67,6 +158,8 @@ export default function HomePage() {
                     })}
                 </div>
             </div>
+            <canvas className="border border-red-500" width={512} height={512} ref={canvasRef}></canvas>
+            <video className="opacity-0" ref={videoRef} style={{ width: '100%', maxWidth: '400px' }}></video>
         </>
     );
 }

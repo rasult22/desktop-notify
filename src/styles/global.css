@@ -138,10 +138,10 @@ html, body {
 }
 .logo {
     transform: rotateY(360deg);
-    animation: spin 4s infinite linear;
+    animation: mySpin 4s infinite linear;
   }
   
-  @keyframes spin {
+  @keyframes mySpin {
     from {
       transform: rotateY(0);
     }

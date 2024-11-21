@@ -1,7 +1,7 @@
 import { BrowserWindow, ipcMain } from "electron";
 import { WIN_CLOSE_CHANNEL, WIN_MAXIMIZE_CHANNEL, WIN_MINIMIZE_CHANNEL } from "./window-channels";
 let idleTimer: any;
-const idleTimeout = 15000; // 150 seconds for idle timeout
+const idleTimeout = 30000; // 150 seconds for idle timeout
 
 export function addWindowEventListeners(mainWindow: BrowserWindow) {
     ipcMain.handle(WIN_MINIMIZE_CHANNEL, () => {
