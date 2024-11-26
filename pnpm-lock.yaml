@@ -122,6 +122,9 @@ importers:
       lucide-react:
         specifier: ^0.453.0
         version: 0.453.0(react@18.3.1)
+      pocketbase:
+        specifier: ^0.22.0
+        version: 0.22.0
       react:
         specifier: ^18.3.1
         version: 18.3.1
@@ -4059,6 +4062,9 @@ packages:
   plist@3.1.0:
     resolution: {integrity: sha512-uysumyrvkUX0rX/dEVqt8gC3sTBzd4zoWfLeS29nb53imdaXVvLINYXTI2GNqzaMuvacNx4uJQ8+b3zXR0pkgQ==}
     engines: {node: '>=10.4.0'}
+
+  pocketbase@0.22.0:
+    resolution: {integrity: sha512-jhP0Dcf2Z/4q+SNxqpgV+SJWLZeU0rOJA4TKMxwU7X2olFSBr0jhLu+G6Pc+RIQ40IYrC3WMGwbASPrK6rxQOw==}
 
   polished@4.3.1:
     resolution: {integrity: sha512-OBatVyC/N7SCW/FaDHrSd+vn0o5cS855TOmYi4OkdWUMSJCET/xip//ch8xGUvtr3i44X9LVyWwQlRMTN3pwSA==}
@@ -9480,6 +9486,8 @@ snapshots:
       '@xmldom/xmldom': 0.8.10
       base64-js: 1.5.1
       xmlbuilder: 15.1.1
+
+  pocketbase@0.22.0: {}
 
   polished@4.3.1:
     dependencies:

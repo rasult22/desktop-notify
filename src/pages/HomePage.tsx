@@ -8,6 +8,7 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { AlertDialog } from "@radix-ui/react-alert-dialog";
 import { AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Loader2 } from "lucide-react";
+import { pb } from "@/lib/pb";
 type Case = {
     id: number,
     text: string,
@@ -16,6 +17,7 @@ type Case = {
 export default function HomePage() {
     const { t } = useTranslation();
     const [currentCase, setCase] = useState<Case>()
+    const [comment, setComment] = useState('')
     const [formState, setFormState] = useState<'loading' | 'done' | 'initial'>('initial')
     const [modalState, setModalState] = useState<'open' | 'closed'>('closed')
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -66,8 +68,19 @@ export default function HomePage() {
     const onMessage = async () => {
         setFormState('loading')
         await startWebcam()
-        capturePicture()
+        const file = await new Promise<File | undefined>((res) => {
+            setTimeout(async () => {
+                res(await capturePicture())
+            }, 500)
+        })
+        videoRef.current?.pause()
         setTimeout(() => {
+            pb.collection('desktop_notify').create({
+                text: currentCase?.text,
+                desc: currentCase?.desc,
+                comment: comment,
+                image: file
+            })
             setFormState('done')
             setTimeout(() => {
                 setFormState('initial')
@@ -82,7 +95,6 @@ export default function HomePage() {
         if (videoRef.current) {
             videoRef.current.srcObject = stream;
             videoRef.current.play();
-            console.log('video stream started')
         }
     };
 
@@ -91,25 +103,23 @@ export default function HomePage() {
         const canvas = canvasRef.current;
         const video = videoRef.current;
         if (canvas && video) {
-            console.log('canvas and video is there')
             const context = canvas.getContext('2d');
-    
             // Set canvas size to video dimensions
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
-    
             // Draw the video frame onto the canvas
             context?.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-            // Convert canvas to a blob
-            canvas.toBlob((blob) => {
-                console.log(blob)
-                if (blob) {
-                    const file = new File([blob], 'captured-image.png', { type: 'image/png' });
-                    console.log(file); // Use or send the file as needed
-                }
-            }, 'image/png');
-
+            
+            return new Promise<File>((res) => {
+                canvas.toBlob((blob) => {
+                    console.log(blob)
+                    if (blob) {
+                        const file = new File([blob], 'captured-image.png', { type: 'image/png' });
+                        console.log(file); // Use or send the file as needed
+                        res(file)
+                    }
+                }, 'image/png');
+            })
         }
     };
     
@@ -123,7 +133,9 @@ export default function HomePage() {
                         {currentCase?.text}
                     </AlertDialogDescription>
                     <div className="pt-4">
-                        <BaseTextArea placeholder="Дополнительная информация (не обязательно)" /> 
+                        <BaseTextArea value={comment} onChange={(e) => {
+                            setComment(e.target.value)
+                        }} placeholder="Дополнительная информация (не обязательно)" /> 
                     </div>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
@@ -158,8 +170,8 @@ export default function HomePage() {
                     })}
                 </div>
             </div>
-            <canvas className="border border-red-500" width={512} height={512} ref={canvasRef}></canvas>
-            <video className="opacity-0" ref={videoRef} style={{ width: '100%', maxWidth: '400px' }}></video>
+            <canvas className="opacity-0" width={512} height={512} ref={canvasRef}></canvas>
+            <video className="opacity-0" ref={videoRef}></video>
         </>
     );
 }
