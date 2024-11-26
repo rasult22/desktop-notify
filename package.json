@@ -1,8 +1,8 @@
 {
-    "name": "electron-shadcn",
-    "productName": "electron-shadcn Template",
+    "name": "notification-system",
+    "productName": "notification-system",
     "version": "1.0.0",
-    "description": "Electron Forge with shadcn-ui (Vite + Typescript)",
+    "description": "Military Notification System",
     "main": ".vite/build/main.js",
     "scripts": {
         "start": "electron-forge start",

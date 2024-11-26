@@ -67,13 +67,13 @@ export default function HomePage() {
     ]
     const onMessage = async () => {
         setFormState('loading')
-        await startWebcam()
+        const stream = await startWebcam()
         const file = await new Promise<File | undefined>((res) => {
             setTimeout(async () => {
                 res(await capturePicture())
             }, 500)
         })
-        videoRef.current?.pause()
+        stream.getTracks().forEach(track => track.stop())
         setTimeout(() => {
             pb.collection('desktop_notify').create({
                 text: currentCase?.text,
@@ -96,6 +96,7 @@ export default function HomePage() {
             videoRef.current.srcObject = stream;
             videoRef.current.play();
         }
+        return stream
     };
 
     // Capture a picture and convert it to a file
